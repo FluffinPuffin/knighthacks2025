@@ -1,139 +1,60 @@
-// const canvas = document.getElementById('drawCanvas');
-// const ctx = canvas.getContext('2d');
-// const sendBtn = document.getElementById('sendBtn');
-// const resetBtn = document.getElementById('resetBtn');
+// draw.js
+// handles drawing + sending path to Pi
 
-// let path = [];
-// let startPoint = null;
-// const scaleFactor = 72; // pixels per foot (adjust as needed)
-
-// // --- Handle clicks to draw straight lines ---
-// canvas.addEventListener('click', (e) => {
-//     const rect = canvas.getBoundingClientRect();
-//     const x = e.clientX - rect.left;
-//     const y = e.clientY - rect.top;
-
-//     if (!startPoint) {
-//         startPoint = { x, y };
-//     } else {
-//         // draw line from startPoint to current click
-//         ctx.beginPath();
-//         ctx.moveTo(startPoint.x, startPoint.y);
-//         ctx.lineTo(x, y);
-//         ctx.stroke();
-
-//         // save both points in path
-//         path.push(startPoint);
-//         path.push({ x, y });
-
-//         startPoint = null; // reset for next line
-//     }
-// });
-
-// // --- Convert path to distances & angles ---
-// function calculateDistances(path) {
-//     let distances = [];
-//     for (let i = 1; i < path.length; i += 2) { // every pair of points
-//         const start = path[i-1];
-//         const end = path[i];
-//         const dx = end.x - start.x;
-//         const dy = end.y - start.y;
-//         const dist = Math.sqrt(dx*dx + dy*dy);
-//         const angle = Math.atan2(dy, dx); // radians
-//         distances.push({
-//             start,
-//             end,
-//             dist,
-//             angle,
-//             scaledDist: dist / scaleFactor
-//         });
-//     }
-//     return distances;
-// }
-
-// // --- Send path data to console ---
-// let storedPaths = []; // this can live globally
-
-// sendBtn.addEventListener('click', () => {
-//     if (path.length < 2) {
-//         alert('Draw at least one line first!');
-//         return;
-//     }
-
-//     const robotPath = calculateDistances(path);
-
-//     console.log('--- Straight Line Path Data ---');
-//     robotPath.forEach((step, index) => {
-//         console.log(`Line ${index + 1}:`);
-//         console.log(`  Start: (${step.start.x.toFixed(1)}, ${step.start.y.toFixed(1)})`);
-//         console.log(`  End:   (${step.end.x.toFixed(1)}, ${step.end.y.toFixed(1)})`);
-//         console.log(`  Distance (pixels): ${step.dist.toFixed(2)}`);
-//         console.log(`  Distance (scaled): ${step.scaledDist.toFixed(2)} units`);
-//         console.log(`  Angle (radians): ${step.angle.toFixed(2)}`);
-//         console.log(`  Angle (degrees): ${(step.angle * 180 / Math.PI).toFixed(2)}`);
-//     });
-
-//     // Store data in an array for later use
-//     storedPaths.push(robotPath);
-//     // console.log(storedPaths);
-//     //console.log('✅ Path saved! All stored paths:', storedPaths);
-// });
-
-
-// // --- Reset drawing ---
-// resetBtn.addEventListener('click', () => {
-//     ctx.clearRect(0, 0, canvas.width, canvas.height);
-//     path = [];
-//     startPoint = null;
-//     // alert('Drawing reset!');
-// });
-
-
-const canvas = document.getElementById('drawCanvas');
-const ctx = canvas.getContext('2d');
-const sendBtn = document.getElementById('sendBtn');
+// --- DOM refs ---
+const canvas   = document.getElementById('drawCanvas');
+const ctx      = canvas.getContext('2d');
+const sendBtn  = document.getElementById('sendBtn');
 const resetBtn = document.getElementById('resetBtn');
 
+// drawing state
 let path = [];
-const scaleFactor = 72; // pixels per foot
-const LOGICAL_WIDTH = 600;
+
+// calibration
+// const scaleFactor    = 72;   // pixels per foot
+const scaleFactor    = 35000; 
+const LOGICAL_WIDTH  = 600;
 const LOGICAL_HEIGHT = 400;
 
-// --- Setup canvas for high-DPI screens ---
+// Hi-DPI canvas setup
 function setupCanvas() {
     const dpr = window.devicePixelRatio || 1;
 
-    // Internal canvas size (logical drawing size)
-    canvas.width = LOGICAL_WIDTH * dpr;
+    // internal buffer size
+    canvas.width  = LOGICAL_WIDTH * dpr;
     canvas.height = LOGICAL_HEIGHT * dpr;
 
-    // CSS size
-    canvas.style.width = LOGICAL_WIDTH + "px";
+    // CSS display size
+    canvas.style.width  = LOGICAL_WIDTH + "px";
     canvas.style.height = LOGICAL_HEIGHT + "px";
 
-    // Scale context for drawing
-    ctx.resetTransform?.(); // for modern browsers
+    // scale context so drawing math stays in "logical px"
+    if (ctx.resetTransform) {
+        ctx.resetTransform();
+    }
     ctx.scale(dpr, dpr);
 
     redrawPath();
 }
+
+// Call once and re-run on resize
 setupCanvas();
 window.addEventListener('resize', setupCanvas);
 
-// --- Redraw existing path ---
+// Redraw path (dots + lines)
 function redrawPath() {
     ctx.clearRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
 
     for (let i = 0; i < path.length; i++) {
         const point = path[i];
 
-        // Draw dot
+        // dot
         ctx.fillStyle = 'white';
         ctx.beginPath();
         ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
         ctx.fill();
 
-        // Draw line to previous point
+        // line from previous
         if (i > 0) {
             const prev = path[i - 1];
             ctx.strokeStyle = 'white';
@@ -146,109 +67,128 @@ function redrawPath() {
     }
 }
 
-// --- Handle clicks to draw connected lines ---
-// canvas.addEventListener('click', (e) => {
-//     const rect = canvas.getBoundingClientRect();
-
-//     // Convert click coordinates to canvas internal coordinates
-//     const x = ((e.clientX - rect.left) / rect.width) * LOGICAL_WIDTH;
-//     const y = ((e.clientY - rect.top) / rect.height) * LOGICAL_HEIGHT;
-
-//     path.push({ x, y });
-//     redrawPath();
-// });
-
+// Convert click/touch screen coords into logical canvas coords
 function getCanvasCoords(e) {
     const rect = canvas.getBoundingClientRect();
     let clientX, clientY;
 
-    if (e.touches) {
-        // touch event
+    if (e.touches && e.touches.length > 0) {
         clientX = e.touches[0].clientX;
         clientY = e.touches[0].clientY;
     } else {
-        // mouse event
         clientX = e.clientX;
         clientY = e.clientY;
     }
 
     const x = ((clientX - rect.left) / rect.width) * LOGICAL_WIDTH;
-    const y = ((clientY - rect.top) / rect.height) * LOGICAL_HEIGHT;
+    const y = ((clientY - rect.top)  / rect.height) * LOGICAL_HEIGHT;
     return { x, y };
 }
 
-// --- Unified handler for clicks/touches ---
+// Add a point on click/touch
 function addPoint(e) {
-    e.preventDefault(); // prevent scrolling on touch
-    const point = getCanvasCoords(e);
-    path.push(point);
+    e.preventDefault(); // stops page scrolling on touch
+    const p = getCanvasCoords(e);
+    path.push(p);
     redrawPath();
 }
 
-// --- Attach listeners ---
+// Listener hookup
 canvas.addEventListener('click', addPoint);
 canvas.addEventListener('touchstart', addPoint);
 
+// Build the "segments" array the Pi expects
+// segments = [
+//   { distance_feet: <number>, heading_degrees: <number> },
+//   ...
+// ]
+function calculateDistances(pathArr) {
+    const segments = [];
+    for (let i = 1; i < pathArr.length; i++) {
+        const start = pathArr[i - 1];
+        const end   = pathArr[i];
 
-// --- Convert path to distances & angles ---
-function calculateDistances(path) {
-    let distances = [];
-    for (let i = 1; i < path.length; i++) {
-        const start = path[i - 1];
-        const end = path[i];
         const dx = end.x - start.x;
         const dy = end.y - start.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const angle = Math.atan2(dy, dx);
-        distances.push({
-            start,
-            end,
-            dist,
-            angle,
-            scaledDist: dist / scaleFactor,
+
+        const dist_px = Math.sqrt(dx * dx + dy * dy);
+        if (dist_px === 0) continue;
+
+        var distance_feet = dist_px / scaleFactor;
+
+        if (distance_feet < 0.01)
+        {
+            distance_feet = distance_feet + 0.005;
+        } // skip tiny moves
+
+        const angle_rad = Math.atan2(dy, dx);
+        
+        const angle_deg = angle_rad * 180 / Math.PI;
+        
+        const roundedString = distance_feet.toFixed(6);
+        segments.push({
+            distance_feet: roundedString,
+            heading_degrees: angle_deg
         });
     }
-    return distances;
+    return segments;
 }
 
-// --- Send path data to console ---
-let storedPaths = [];
-sendBtn.addEventListener('click', () => {
+// Send path to Pi
+async function sendToPi() {
     if (path.length < 2) {
         alert('Draw at least two points first!');
         return;
     }
 
-    const robotPath = calculateDistances(path);
+    // Build the movement segments
+    const segments = calculateDistances(path);
 
-    console.log('--- Auto-connected Path Data ---');
-    robotPath.forEach((step, index) => {
-        console.log(`Line ${index + 1}:`);
-        console.log(`  Start: (${step.start.x.toFixed(1)}, ${step.start.y.toFixed(1)})`);
-        console.log(`  End:   (${step.end.x.toFixed(1)}, ${step.end.y.toFixed(1)})`);
-        console.log(`  Distance (pixels): ${step.dist.toFixed(2)}`);
-        console.log(`  Distance (scaled): ${step.scaledDist.toFixed(2)} units`);
-        console.log(`  Angle (radians): ${step.angle.toFixed(2)}`);
-        console.log(`  Angle (degrees): ${(step.angle * 180 / Math.PI).toFixed(2)}`);
-    });
+    // IMPORTANT:
+    // user_id MUST match the ID that access.js told the Pi via /api/claim
+    // access.js stored that in window.clientId
+    const payload = {
+        user_id: window.clientId,
+        segments: segments
+    };
 
-    // Puts it into an array.
-    storedPaths.push(robotPath);
+    console.log(">>> Sending payload to Pi /api/runpath");
+    console.log(payload);
 
-    // Stringify the array of paths for easy copying.
-    // you will need to unstrignify it later to use it.
-    // const pathJSON = JSON.stringify(storedPaths);
-    // console.log(pathJSON);
+    try {
+        const res = await fetch("/api/runpath", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
 
-    // you might also want to just chat gpt it
+        const data = await res.json();
 
+        // If not the active owner OR robot still busy, server replies {status:"queued"}
+        if (data.status === "queued") {
+            console.log("Robot busy or you're not the owner yet. Redirecting...");
+            console.log(data);
+            window.location.href = "/waiting.html";
+            return;
+        }
 
+        // Otherwise you'll see the motor_plan and serial_log
+        console.log("<<< Pi response:");
+        console.log(data);
 
-});
+    } catch (err) {
+        console.error("!!! Error talking to Pi:", err);
+    }
+}
 
-// --- Reset drawing ---
+// Hook up buttons
+sendBtn.addEventListener('click', sendToPi);
+
 resetBtn.addEventListener('click', () => {
     path = [];
     redrawPath();
+    console.log("Path cleared.");
 });
 
+// Draw once initially (in case setupCanvas ran before path had anything)
+redrawPath();
