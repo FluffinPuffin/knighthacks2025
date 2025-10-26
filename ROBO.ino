@@ -23,7 +23,7 @@ void setup() {
       delay(10);
     }
   }
-  Serial.println("MPU6050 Found!");
+  Serial.println("MPU6050 Found");
   mpu.setAccelerometerRange(MPU6050_RANGE_4_G);
   mpu.setGyroRange(MPU6050_RANGE_500_DEG);
   mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
@@ -43,13 +43,13 @@ void loop()
   float angleZ = 0.0f;
   float position = 0.0f;
   int counter = 0;
-  
+  /*
   Serial.print("Acceleration: " );
   Serial.println(a.acceleration.x - xoffset);
   Serial.println(a.acceleration.y - yoffset);
   Serial.print("Turn rate: ");
   Serial.println(g.gyro.z - zoffset);
-
+  */
   delay(200);
   clearInputBuffer();
   while (Serial.available() == 0)
