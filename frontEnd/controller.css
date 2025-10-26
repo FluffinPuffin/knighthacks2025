@@ -1,0 +1,87 @@
+/* General Body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: linear-gradient(to bottom, #111 0%, #333 100%);
+    background-repeat: no-repeat;
+    /* prevent repeating */
+    background-attachment: fixed;
+    /* optional: makes gradient fixed on scroll */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px;
+    min-height: 100vh;
+    /* ensure full viewport height */
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+    margin: 0 20px;
+    font-weight: bold;
+}
+
+/* Page Title */
+h1 {
+    margin: 40px 20px 20px 20px;
+    text-align: center;
+    color: white;
+}
+
+/* Controller Layout */
+.controller-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.side-buttons {
+    display: flex;
+    gap: 40px;
+}
+
+/* Buttons */
+button {
+    background: #FFC904;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 15px 30px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background: #fff;
+    color: #111;
+    transform: scale(1.05);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .side-buttons {
+        gap: 20px;
+    }
+
+    button {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+}

@@ -34,3 +34,23 @@ window.addEventListener('scroll', () => {
 });
 
 checkScroll();
+
+// Arrow
+const scrollArrow = document.querySelector('.scroll-down');
+
+window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+
+    if (scrollArrow && scrollY > 50) {
+        scrollArrow.style.opacity = 0; // CSS transition handles smooth fade
+    }
+});
+
+// Remove element once transition ends
+scrollArrow.addEventListener('transitionend', () => {
+    if (scrollArrow.style.opacity === '0') {
+        scrollArrow.remove();
+    }
+});
+
+
