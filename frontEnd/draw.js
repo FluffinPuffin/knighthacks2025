@@ -232,7 +232,18 @@ sendBtn.addEventListener('click', () => {
         console.log(`  Angle (degrees): ${(step.angle * 180 / Math.PI).toFixed(2)}`);
     });
 
+    // Puts it into an array.
     storedPaths.push(robotPath);
+
+    // Stringify the array of paths for easy copying.
+    // you will need to unstrignify it later to use it.
+    // const pathJSON = JSON.stringify(storedPaths);
+    // console.log(pathJSON);
+
+    // you might also want to just chat gpt it
+
+
+
 });
 
 // --- Reset drawing ---
