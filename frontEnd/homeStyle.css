@@ -1,0 +1,226 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: linear-gradient(to bottom, #111, #333);
+    color: white;
+    overflow-x: hidden;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    text-align: center;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 1000;
+}
+
+.header.hidden {
+    opacity: 0;
+    transform: translateY(-100%);
+    pointer-events: none;
+    /* optional: prevent clicks while hidden */
+}
+
+.header a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 20px;
+    font-weight: bold;
+}
+
+section {
+    padding: 120px 20px;
+    text-align: center;
+}
+
+/* Person layout */
+
+.person:first-of-type {
+    margin-top: 40px;
+    /* smaller space above */
+    margin-bottom: 60px;
+    /* optional: reduce bottom margin too */
+}
+
+.person {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+    margin: 160px 0;
+    /* lots of space between each person */
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.person.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.person:nth-child(even) {
+    flex-direction: row-reverse;
+}
+
+/* Text section */
+.text {
+    max-width: 500px;
+    text-align: left;
+}
+
+.text h3 {
+    color: #FFC904;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+.text p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+/* Links styling */
+.links {
+    margin-top: 15px;
+}
+
+.links a {
+    color: #FFC904;
+    text-decoration: none;
+    border: 2px solid #FFC904;
+    border-radius: 25px;
+    padding: 8px 16px;
+    margin-right: 10px;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.links a:hover {
+    background: #FFC904;
+    color: #111;
+}
+
+/* Profile picture styling */
+.profile-pic {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #FFC904;
+    /* UCF gold border */
+    box-shadow: 0 0 20px rgba(255, 201, 4, 0.6);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* .profile-pic:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 35px rgba(255, 201, 4, 0.9);
+} */
+
+/* Juan's photo */
+#juan {
+    border: 5px solid #006747;
+    box-shadow: 0 0 20px rgba(0, 103, 71, 0.7);
+}
+
+/* #juan:hover {
+    box-shadow: 0 0 35px rgba(0, 103, 71, 0.9);
+} */
+
+/* Juan's name and role */
+.text .juan-name {
+    color: #006747;
+    /* USF green */
+}
+
+.juan-role {
+    color: #006747;
+    /* USF green */
+}
+
+/* Juan's links */
+.juan-links a {
+    color: #006747;
+    border: 2px solid #006747;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.juan-links a:hover {
+    background: #006747;
+    color: white;
+}
+
+/* Group photo styling */
+.group-photo {
+    width: 80%;
+    /* bigger than before */
+    max-width: 900px;
+    /* caps size on large screens */
+    border-radius: 15px;
+    /* slightly rounded corners */
+    object-fit: cover;
+    border: 3px solid #FFC904;
+    /* optional gold border */
+    box-shadow: 0 0 25px rgba(255, 201, 4, 0.4);
+    margin: 0 auto;
+    /* center it */
+    display: block;
+}
+
+/* --- Mobile / Small Screen Styles --- */
+@media (max-width: 768px) {
+
+    /* Reduce padding for sections */
+    section {
+        padding: 60px 15px;
+    }
+
+    /* Person layout becomes vertical on small screens */
+    .person {
+        flex-direction: column !important;
+        gap: 30px;
+        margin: 80px 0;
+        text-align: center;
+    }
+
+    /* Text centered for small screens */
+    .text {
+        max-width: 90%;
+        text-align: center;
+    }
+
+    .text h3 {
+        font-size: 1.5em;
+    }
+
+    .text p {
+        font-size: 0.95em;
+    }
+
+    /* Links block stacked */
+    .links,
+    .juan-links {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    /* Profile pictures smaller on mobile */
+    .profile-pic {
+        width: 140px;
+        height: 140px;
+    }
+
+    /* Group photo smaller on mobile */
+    .group-photo {
+        width: 95%;
+        max-width: 500px;
+        border-radius: 15px;
+    }
+}

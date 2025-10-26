@@ -1,0 +1,116 @@
+/* General Body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: linear-gradient(to bottom, #111, #333);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    padding-top: 60px;
+    /* leave space for fixed header */
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    text-align: center;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 1000;
+}
+
+.header.hidden {
+    opacity: 0;
+    transform: translateY(-100%);
+    pointer-events: none;
+}
+
+.header a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 20px;
+    font-weight: bold;
+}
+
+/* Page Title */
+h1 {
+    margin: 40px 20px 20px 20px;
+    text-align: center;
+    color: #ffffff;
+    /* match About Us theme */
+}
+
+/* Canvas and Controls Layout */
+.canvas-container {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    /* wrap on smaller screens */
+    margin-bottom: 60px;
+}
+
+canvas {
+    border: 3px solid #ffffff;
+    border-radius: 10px;
+    background: #222;
+    cursor: crosshair;
+    width: 600px;
+    /* displayed size on PC */
+    height: 400px;
+    max-width: 95%;
+    /* scale down on smaller screens */
+    display: block;
+    margin: 0 auto;
+}
+
+/* Controls Buttons */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.controls button {
+    background: #ffffff;
+    color: #111;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.controls button:hover {
+    background: #fff;
+    transform: scale(1.05);
+}
+
+/* --- Mobile / Small Screens --- */
+@media (max-width: 768px) {
+    .canvas-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    canvas {
+        width: 95%;
+        max-width: 400px;
+        height: auto;
+    }
+
+    .controls {
+        flex-direction: row;
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
