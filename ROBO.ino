@@ -76,12 +76,12 @@ void loop()
         counter++;
         lastTime = now;
       }
-      float dt = (now - lastTime) / 1000000.0f;  // dt in seconds
+      float dt = (now - lastTime) / 1000000.0f; 
       lastTime = now;
-      Serial.println(dt);
+      //Serial.println(dt);
       float accelX_rate = sqrt(pow((a.acceleration.x - xoffset), 2) + pow((a.acceleration.y - yoffset), 2));
       position += abs(accelX_rate * (dt*dt));
-      Serial.println(position);
+      //Serial.println(position);
     }
     analogWrite(5, 0);
     analogWrite(6, 0);
@@ -106,12 +106,12 @@ void loop()
         counter++;
         lastTime = now;
       }
-      float dt = (now - lastTime) / 1000000.0f;  // dt in seconds
+      float dt = (now - lastTime) / 1000000.0f; 
       lastTime = now;
-      Serial.println(dt);
+      //Serial.println(dt);
       float accelX_rate = sqrt(pow((a.acceleration.x - xoffset), 2) + pow((a.acceleration.y - yoffset), 2));
       position += abs(accelX_rate * (dt*dt));
-      Serial.println(position);
+      //Serial.println(position);
     }
     analogWrite(5, 0);
     analogWrite(6, 0);
@@ -136,12 +136,12 @@ void loop()
         counter++;
         lastTime = now;
       }
-      float dt = (now - lastTime) / 1000000.0f;  // dt in seconds
+      float dt = (now - lastTime) / 1000000.0f; 
       lastTime = now;
-      Serial.println(dt);
+      //Serial.println(dt);
       float accelX_rate = sqrt(pow((a.acceleration.x - xoffset), 2) + pow((a.acceleration.y - yoffset), 2));
       position += abs(accelX_rate * (dt*dt));
-      Serial.println(position);
+      //Serial.println(position);
     }
     analogWrite(5, 0);
     analogWrite(6, 0);
@@ -152,8 +152,8 @@ void loop()
     clearInputBuffer();
     while (Serial.available() == 0){}
     float turnAngleR = Serial.parseInt();
-    Serial.println(angleZ);
-    Serial.println(turnAngleR);
+    //Serial.println(angleZ);
+    //Serial.println(turnAngleR);
     analogWrite(5, 180);
     analogWrite(6, 50);
     s1.write(115);
@@ -162,7 +162,7 @@ void loop()
       sensors_event_t a, g, temp;
       mpu.getEvent(&a, &g, &temp);
       unsigned long now = micros();
-      float dt = (now - lastTime) / 1000000.0f;  // dt in seconds
+      float dt = (now - lastTime) / 1000000.0f; 
       lastTime = now;
       float gyroZ_rate = ((g.gyro.z - zoffset) * (180/M_PI));  // deg/s
       angleZ += abs(gyroZ_rate * dt);
@@ -177,7 +177,7 @@ void loop()
     clearInputBuffer();
     while (Serial.available() == 0){}
     float turnAngleL = Serial.parseInt();
-    Serial.println(turnAngleL);
+    //Serial.println(turnAngleL);
     analogWrite(6, 180);
     analogWrite(5, 0);
     s1.write(115);
@@ -186,7 +186,7 @@ void loop()
       sensors_event_t a, g, temp;
       mpu.getEvent(&a, &g, &temp);
       unsigned long now = micros();
-      float dt = (now - lastTime) / 1000000.0f;  // dt in seconds
+      float dt = (now - lastTime) / 1000000.0f;  
       lastTime = now;
       float gyroZ_rate = ((g.gyro.z - zoffset) * (180/M_PI));  // deg/s
       angleZ += abs(gyroZ_rate * dt);
