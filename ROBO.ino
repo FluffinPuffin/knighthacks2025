@@ -154,8 +154,8 @@ void loop()
     float turnAngleR = Serial.parseInt();
     //Serial.println(angleZ);
     //Serial.println(turnAngleR);
-    analogWrite(5, 180);
-    analogWrite(6, 50);
+    analogWrite(5, 240);
+    analogWrite(6, 0);
     s1.write(115);
     while (angleZ <= turnAngleR)
     {
@@ -178,7 +178,7 @@ void loop()
     while (Serial.available() == 0){}
     float turnAngleL = Serial.parseInt();
     //Serial.println(turnAngleL);
-    analogWrite(6, 180);
+    analogWrite(6, 240);
     analogWrite(5, 0);
     s1.write(115);
     while (angleZ <= turnAngleL)
